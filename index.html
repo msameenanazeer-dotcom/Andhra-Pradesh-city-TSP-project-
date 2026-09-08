@@ -1,4 +1,4 @@
-       <!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -7,218 +7,277 @@
 <title>Andhra Pradesh City Path Finder</title>
 
 <style>
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-        font-family: Arial, sans-serif;
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #e3f2fd, #f5faff);
+    color: #222;
+}
+
+header {
+    background: linear-gradient(135deg, #174a9c, #1976d2);
+    color: white;
+    text-align: center;
+    padding: 28px 15px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 32px;
+}
+
+header p {
+    margin: 8px 0 0;
+    font-size: 18px;
+}
+
+.container {
+    width: 92%;
+    max-width: 1250px;
+    margin: 30px auto;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    margin-bottom: 25px;
+    border-radius: 18px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.10);
+}
+
+.card h2 {
+    color: #1450a3;
+    margin-top: 0;
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+}
+
+select {
+    padding: 13px;
+    width: 220px;
+    border: 2px solid #1976d2;
+    border-radius: 9px;
+    font-size: 16px;
+}
+
+button {
+    border: none;
+    padding: 13px 20px;
+    border-radius: 9px;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+}
+
+.calculate {
+    background: #1976d2;
+}
+
+.dfs {
+    background: #ff7043;
+}
+
+.bfs {
+    background: #43a047;
+}
+
+.astar {
+    background: #8e24aa;
+}
+
+.hill {
+    background: #f9a825;
+}
+
+.ao {
+    background: #d81b60;
+}
+
+.reset {
+    background: #616161;
+}
+
+/* Graph */
+
+.graph {
+    position: relative;
+    height: 600px;
+    border: 2px solid #1976d2;
+    border-radius: 15px;
+    background: #f8fbff;
+    overflow: hidden;
+}
+
+svg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.edge {
+    stroke: #999;
+    stroke-width: 3;
+}
+
+.edge-text {
+    font-size: 14px;
+    fill: #333;
+    font-weight: bold;
+}
+
+.city {
+    position: absolute;
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    background: #1976d2;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 13px;
+    border: 4px solid white;
+    box-shadow: 0 4px 12px rgba(0,0,0,.3);
+    z-index: 2;
+    transition: .4s;
+}
+
+.city small {
+    position: absolute;
+    top: 77px;
+    color: #222;
+    width: 130px;
+    text-align: center;
+    font-size: 13px;
+}
+
+.city.start {
+    background: #2e7d32;
+    transform: scale(1.15);
+}
+
+.city.goal {
+    background: #c62828;
+    transform: scale(1.15);
+}
+
+.city.visited {
+    background: #ff9800;
+}
+
+.city.current {
+    background: #9c27b0;
+    transform: scale(1.2);
+}
+
+.city.path {
+    background: #00897b;
+    transform: scale(1.15);
+}
+
+/* Algorithm Working */
+
+.working {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.algorithm-info {
+    background: #f5f7fa;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.algorithm-info h3 {
+    color: #1450a3;
+}
+
+.step-box {
+    max-height: 400px;
+    overflow-y: auto;
+    background: #111827;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    font-family: Consolas, monospace;
+}
+
+.step {
+    padding: 10px;
+    margin-bottom: 8px;
+    border-left: 4px solid #42a5f5;
+    background: #1f2937;
+}
+
+.result {
+    background: #e8f5e9;
+    border-left: 6px solid #2e7d32;
+    padding: 18px;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+.progress {
+    margin-top: 15px;
+    height: 12px;
+    background: #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: #1976d2;
+    transition: width .3s;
+}
+
+.legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+.legend span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.dot {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+@media(max-width: 800px) {
+    .working {
+        grid-template-columns: 1fr;
     }
 
-    body {
-        background: linear-gradient(135deg, #e3f2fd, #f5f7fa);
-        min-height: 100vh;
-        color: #222;
-    }
-
-    header {
-        background: linear-gradient(90deg, #0d47a1, #1976d2);
-        color: white;
-        padding: 20px;
-        text-align: center;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-    }
-
-    header h1 {
-        font-size: 30px;
-        margin-bottom: 8px;
-    }
-
-    header p {
-        font-size: 16px;
-    }
-
-    .container {
-        max-width: 1200px;
-        margin: 25px auto;
-        padding: 20px;
-    }
-
-    .control-panel {
-        background: white;
-        padding: 25px;
-        border-radius: 15px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.12);
-        margin-bottom: 25px;
-    }
-
-    .control-panel h2 {
-        margin-bottom: 20px;
-        color: #0d47a1;
-    }
-
-    .select-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 15px;
-        align-items: center;
-    }
-
-    select {
-        padding: 12px;
-        border: 2px solid #1976d2;
-        border-radius: 8px;
-        font-size: 16px;
-        min-width: 200px;
-        background: white;
-    }
-
-    button {
-        border: none;
-        padding: 12px 20px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 15px;
-        font-weight: bold;
-        transition: 0.3s;
-    }
-
-    button:hover {
-        transform: translateY(-2px);
-        opacity: 0.9;
-    }
-
-    .calculate {
-        background: #1976d2;
-        color: white;
-    }
-
-    .algorithm-section {
-        background: white;
-        padding: 25px;
-        border-radius: 15px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.12);
-        margin-bottom: 25px;
-    }
-
-    .algorithm-section h2 {
-        margin-bottom: 20px;
-        color: #0d47a1;
-    }
-
-    .algorithm-buttons {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-    }
-
-    .dfs {
-        background: #ff7043;
-        color: white;
-    }
-
-    .bfs {
-        background: #43a047;
-        color: white;
-    }
-
-    .astar {
-        background: #8e24aa;
-        color: white;
-    }
-
-    .hill {
-        background: #f9a825;
-        color: white;
-    }
-
-    .ao {
-        background: #d81b60;
-        color: white;
-    }
-
-    .reset {
-        background: #616161;
-        color: white;
-    }
-
-    .graph-container {
-        background: white;
-        padding: 20px;
-        border-radius: 15px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.12);
-        text-align: center;
-    }
-
-    .graph-container h2 {
-        color: #0d47a1;
-        margin-bottom: 15px;
-    }
-
-    svg {
-        width: 100%;
+    .graph {
         height: 500px;
-        border: 2px solid #1976d2;
-        border-radius: 10px;
-        background: #f8fbff;
     }
-
-    .result-box {
-        margin-top: 25px;
-        background: white;
-        padding: 25px;
-        border-radius: 15px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.12);
-    }
-
-    .result-box h2 {
-        color: #0d47a1;
-        margin-bottom: 15px;
-    }
-
-    #result {
-        background: #f1f8e9;
-        padding: 20px;
-        border-left: 6px solid #43a047;
-        border-radius: 8px;
-        line-height: 1.8;
-        min-height: 80px;
-        font-size: 16px;
-    }
-
-    .legend {
-        margin-top: 15px;
-        display: flex;
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 20px;
-    }
-
-    .legend span {
-        font-weight: bold;
-    }
-
-    footer {
-        margin-top: 30px;
-        background: #0d47a1;
-        color: white;
-        text-align: center;
-        padding: 15px;
-    }
-
-    @media(max-width:700px) {
-        .select-row {
-            flex-direction: column;
-            align-items: stretch;
-        }
-
-        select, button {
-            width: 100%;
-        }
-
-        svg {
-            height: 400px;
-        }
-    }
+}
 </style>
 </head>
 
@@ -231,286 +290,456 @@
 
 <div class="container">
 
-    <div class="control-panel">
-        <h2>📍 Select Starting and Destination Cities</h2>
+<!-- CITY SELECTION -->
 
-        <div class="select-row">
+<div class="card">
 
-            <select id="startCity">
-                <option value="">Select Start City</option>
-                <option>Visakhapatnam</option>
-                <option>Vijayawada</option>
-                <option>Guntur</option>
-                <option>Tirupati</option>
-                <option>Kurnool</option>
-                <option>Nellore</option>
-                <option>Kakinada</option>
-                <option>Rajahmundry</option>
-            </select>
+<h2>📍 Select Starting and Destination Cities</h2>
 
-            <select id="endCity">
-                <option value="">Select Destination City</option>
-                <option>Visakhapatnam</option>
-                <option>Vijayawada</option>
-                <option>Guntur</option>
-                <option>Tirupati</option>
-                <option>Kurnool</option>
-                <option>Nellore</option>
-                <option>Kakinada</option>
-                <option>Rajahmundry</option>
-            </select>
+<div class="controls">
 
-            <button class="calculate" onclick="calculateDistance()">
-                Calculate Distance
-            </button>
+<select id="startCity">
+    <option value="">Select Start City</option>
+</select>
 
-        </div>
-    </div>
+<select id="goalCity">
+    <option value="">Select Destination City</option>
+</select>
 
-
-    <div class="algorithm-section">
-
-        <h2>🤖 Select Search Algorithm</h2>
-
-        <div class="algorithm-buttons">
-
-            <button class="dfs" onclick="runAlgorithm('DFS')">
-                DFS
-            </button>
-
-            <button class="bfs" onclick="runAlgorithm('BFS')">
-                BFS
-            </button>
-
-            <button class="astar" onclick="runAlgorithm('A*')">
-                A*
-            </button>
-
-            <button class="hill" onclick="runAlgorithm('Hill Climbing')">
-                Hill Climbing
-            </button>
-
-            <button class="ao" onclick="runAlgorithm('AO*')">
-                AO*
-            </button>
-
-            <button class="reset" onclick="resetGraph()">
-                Reset
-            </button>
-
-        </div>
-
-    </div>
-
-
-    <div class="graph-container">
-
-        <h2>🗺 Andhra Pradesh Cities Graph</h2>
-
-        <svg id="graph"></svg>
-
-        <div class="legend">
-            <span>🟢 Start City</span>
-            <span>🔴 Destination</span>
-            <span>🔵 Visited Path</span>
-        </div>
-
-    </div>
-
-
-    <div class="result-box">
-
-        <h2>📊 Algorithm Working</h2>
-
-        <div id="result">
-            Select two cities and choose an algorithm.
-        </div>
-
-    </div>
+<button class="calculate" onclick="calculateDistance()">
+    Calculate Distance
+</button>
 
 </div>
 
+</div>
 
-<footer>
-    <p>Andhra Pradesh City TSP & Search Algorithm Project</p>
-</footer>
+<!-- ALGORITHM -->
 
+<div class="card">
+
+<h2>🤖 Select Search Algorithm</h2>
+
+<div class="controls">
+
+<button class="dfs" onclick="runAlgorithm('DFS')">DFS</button>
+
+<button class="bfs" onclick="runAlgorithm('BFS')">BFS</button>
+
+<button class="astar" onclick="runAlgorithm('A*')">A*</button>
+
+<button class="hill" onclick="runAlgorithm('HILL')">
+    Hill Climbing
+</button>
+
+<button class="ao" onclick="runAlgorithm('AO*')">
+    AO*
+</button>
+
+<button class="reset" onclick="resetPage()">
+    Reset
+</button>
+
+</div>
+
+</div>
+
+<!-- GRAPH -->
+
+<div class="card">
+
+<h2 style="text-align:center;">
+    🗺️ Andhra Pradesh Cities Graph
+</h2>
+
+<div class="graph" id="graph">
+
+<svg id="edges"></svg>
+
+</div>
+
+<div class="legend">
+    <span><i class="dot" style="background:#2e7d32"></i> Start</span>
+    <span><i class="dot" style="background:#c62828"></i> Destination</span>
+    <span><i class="dot" style="background:#ff9800"></i> Visited</span>
+    <span><i class="dot" style="background:#9c27b0"></i> Current</span>
+    <span><i class="dot" style="background:#00897b"></i> Final Path</span>
+</div>
+
+</div>
+
+<!-- ALGORITHM WORKING -->
+
+<div class="card">
+
+<h2>⚙️ Algorithm Working</h2>
+
+<div class="working">
+
+<div class="algorithm-info">
+
+<h3 id="algorithmTitle">
+    Select an algorithm
+</h3>
+
+<p id="algorithmDescription">
+    Click DFS, BFS, A*, Hill Climbing or AO* to see
+    how the algorithm works step-by-step.
+</p>
+
+<div class="progress">
+    <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<br>
+
+<button class="calculate" onclick="nextStep()">
+    ▶ Next Step
+</button>
+
+<button class="reset" onclick="runAutomatically()">
+    ▶ Run Automatically
+</button>
+
+</div>
+
+<div>
+
+<h3>📋 Step-by-Step Execution</h3>
+
+<div class="step-box" id="steps">
+    Waiting for algorithm...
+</div>
+
+</div>
+
+</div>
+
+<div id="result"></div>
+
+</div>
+
+</div>
 
 <script>
 
-/* =========================
-   CITY GRAPH
-========================= */
+/* =====================================================
+   CITY DATA
+===================================================== */
 
-const graph = {
+const cities = {
 
-    "Visakhapatnam": [
-        {city:"Kakinada", distance:150},
-        {city:"Rajahmundry", distance:200}
-    ],
+    Vijayawada: {
+        x: 22,
+        y: 70,
+        h: 350
+    },
 
-    "Kakinada": [
-        {city:"Visakhapatnam", distance:150},
-        {city:"Rajahmundry", distance:60}
-    ],
+    Guntur: {
+        x: 18,
+        y: 45,
+        h: 380
+    },
 
-    "Rajahmundry": [
-        {city:"Visakhapatnam", distance:200},
-        {city:"Kakinada", distance:60},
-        {city:"Vijayawada", distance:160}
-    ],
+    Eluru: {
+        x: 32,
+        y: 30,
+        h: 300
+    },
 
-    "Vijayawada": [
-        {city:"Rajahmundry", distance:160},
-        {city:"Guntur", distance:35},
-        {city:"Kurnool", distance:300}
-    ],
+    Rajahmundry: {
+        x: 48,
+        y: 25,
+        h: 200
+    },
 
-    "Guntur": [
-        {city:"Vijayawada", distance:35},
-        {city:"Nellore", distance:250}
-    ],
+    Kakinada: {
+        x: 62,
+        y: 30,
+        h: 160
+    },
 
-    "Nellore": [
-        {city:"Guntur", distance:250},
-        {city:"Tirupati", distance:130}
-    ],
+    Visakhapatnam: {
+        x: 75,
+        y: 12,
+        h: 0
+    },
 
-    "Tirupati": [
-        {city:"Nellore", distance:130},
-        {city:"Kurnool", distance:380}
-    ],
+    Ongole: {
+        x: 30,
+        y: 88,
+        h: 450
+    },
 
-    "Kurnool": [
-        {city:"Vijayawada", distance:300},
-        {city:"Tirupati", distance:380}
-    ]
+    Nellore: {
+        x: 45,
+        y: 90,
+        h: 500
+    },
 
-};
-
-
-/* =========================
-   CITY POSITIONS
-========================= */
-
-const positions = {
-
-    "Visakhapatnam": {x:700, y:80},
-
-    "Kakinada": {x:620, y:160},
-
-    "Rajahmundry": {x:540, y:220},
-
-    "Vijayawada": {x:430, y:290},
-
-    "Guntur": {x:330, y:330},
-
-    "Nellore": {x:380, y:430},
-
-    "Tirupati": {x:250, y:450},
-
-    "Kurnool": {x:120, y:250}
+    Tirupati: {
+        x: 62,
+        y: 82,
+        h: 600
+    }
 
 };
 
+/* =====================================================
+   EDGES
+===================================================== */
 
-/* =========================
+const edges = [
+
+    ["Vijayawada","Guntur",35],
+    ["Vijayawada","Eluru",65],
+    ["Vijayawada","Ongole",150],
+
+    ["Guntur","Eluru",70],
+    ["Guntur","Ongole",100],
+
+    ["Eluru","Rajahmundry",95],
+
+    ["Rajahmundry","Kakinada",60],
+    ["Rajahmundry","Visakhapatnam",200],
+
+    ["Kakinada","Visakhapatnam",150],
+
+    ["Ongole","Nellore",120],
+    ["Nellore","Tirupati",130],
+
+    ["Tirupati","Vijayawada",250]
+
+];
+
+/* =====================================================
+   VARIABLES
+===================================================== */
+
+let currentAlgorithm = "";
+let algorithmSteps = [];
+let stepIndex = 0;
+
+let start = "";
+let goal = "";
+
+/* =====================================================
+   INITIALIZE DROPDOWNS
+===================================================== */
+
+const startSelect = document.getElementById("startCity");
+const goalSelect = document.getElementById("goalCity");
+
+Object.keys(cities).forEach(city => {
+
+    startSelect.innerHTML +=
+        `<option value="${city}">${city}</option>`;
+
+    goalSelect.innerHTML +=
+        `<option value="${city}">${city}</option>`;
+
+});
+
+/* =====================================================
    DRAW GRAPH
-========================= */
+===================================================== */
 
-function drawGraph(path = [], start = "", end = "") {
+function drawGraph() {
 
-    const svg = document.getElementById("graph");
+    const graph = document.getElementById("graph");
+    const svg = document.getElementById("edges");
+
+    graph.querySelectorAll(".city").forEach(e => e.remove());
 
     svg.innerHTML = "";
 
-    let drawnEdges = new Set();
+    const width = graph.clientWidth;
+    const height = graph.clientHeight;
 
-    for (let city in graph) {
+    edges.forEach(edge => {
 
-        graph[city].forEach(neighbor => {
+        const [a,b,distance] = edge;
 
-            let edge =
-                [city, neighbor.city].sort().join("-");
+        const A = cities[a];
+        const B = cities[b];
 
-            if (!drawnEdges.has(edge)) {
+        const line = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "line"
+        );
 
-                drawnEdges.add(edge);
+        line.setAttribute(
+            "x1",
+            A.x/100*width
+        );
 
-                let p1 = positions[city];
-                let p2 = positions[neighbor.city];
+        line.setAttribute(
+            "y1",
+            A.y/100*height
+        );
 
-                let line = document.createElementNS(
-                    "http://www.w3.org/2000/svg",
-                    "line"
-                );
+        line.setAttribute(
+            "x2",
+            B.x/100*width
+        );
 
-                line.setAttribute("x1", p1.x);
-                line.setAttribute("y1", p1.y);
+        line.setAttribute(
+            "y2",
+            B.y/100*height
+        );
 
-                line.setAttribute("x2", p2.x);
-                line.setAttribute("y2", p2.y);
+        line.classList.add("edge");
 
-                let isPath = false;
+        svg.appendChild(line);
 
-                for(let i=0; i<path.length-1; i++){
+        const text =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "text"
+            );
 
-                    if(
-                        (path[i] === city &&
-                        path[i+1] === neighbor.city)
-                        ||
-                        (path[i+1] === city &&
-                        path[i] === neighbor.city)
-                    ){
-                        isPath = true;
-                    }
+        text.setAttribute(
+            "x",
+            ((A.x+B.x)/2)/100*width
+        );
 
-                }
+        text.setAttribute(
+            "y",
+            ((A.y+B.y)/2)/100*height
+        );
 
-                line.setAttribute(
-                    "stroke",
-                    isPath ? "#1565c0" : "#999"
-                );
+        text.classList.add("edge-text");
 
-                line.setAttribute(
-                    "stroke-width",
-                    isPath ? "7" : "3"
-                );
+        text.textContent = distance + " km";
 
-                svg.appendChild(line);
+        svg.appendChild(text);
 
+    });
 
-                /* DISTANCE TEXT */
+    Object.entries(cities).forEach(([name,data]) => {
 
-                let text = document.createElementNS(
-                    "http://www.w3.org/2000/svg",
-                    "text"
-                );
+        const div = document.createElement("div");
 
-                text.setAttribute(
-                    "x",
-                    (p1.x + p2.x)/2
-                );
+        div.className = "city";
 
-                text.setAttribute(
-                    "y",
-                    (p1.y + p2.y)/2
-                );
+        div.id = "city-" + name;
 
-                text.setAttribute(
-                    "text-anchor",
-                    "middle"
-                );
+        div.style.left =
+            `calc(${data.x}% - 37px)`;
 
-                text.setAttribute(
-                    "font-size",
-                    "14"
-                );
+        div.style.top =
+            `calc(${data.y}% - 37px)`;
 
-                text.textContent =
-                    neighbor.distance + " km";
+        div.innerHTML =
+            `${name.substring(0,3)}
+             <small>${name}</small>`;
 
-                svg.appendChild(text);
+        graph.appendChild(div);
+
+    });
+
+}
+
+drawGraph();
+
+window.addEventListener("resize", drawGraph);
+
+/* =====================================================
+   GET NEIGHBORS
+===================================================== */
+
+function getNeighbors(city) {
+
+    let result = [];
+
+    edges.forEach(([a,b,d]) => {
+
+        if(a === city)
+            result.push({city:b,cost:d});
+
+        if(b === city)
+            result.push({city:a,cost:d});
+
+    });
+
+    return result;
+}
+
+/* =====================================================
+   DISTANCE
+===================================================== */
+
+function calculateDistance() {
+
+    start = startSelect.value;
+    goal = goalSelect.value;
+
+    if(!start || !goal) {
+
+        alert("Please select start and destination cities.");
+
+        return;
+    }
+
+    if(start === goal) {
+
+        alert("Start and destination cannot be same.");
+
+        return;
+    }
+
+    const path = shortestPath(start,goal);
+
+    const distance =
+        calculatePathDistance(path);
+
+    alert(
+        "Shortest Distance:\n\n" +
+        path.join(" → ") +
+        "\n\nDistance: " +
+        distance +
+        " km"
+    );
+
+}
+
+/* =====================================================
+   SHORTEST PATH
+===================================================== */
+
+function shortestPath(start,goal) {
+
+    let queue = [{
+        city:start,
+        distance:0,
+        path:[start]
+    }];
+
+    let visited = new Set();
+
+    while(queue.length) {
+
+        queue.sort((a,b)=>a.distance-b.distance);
+
+        let current = queue.shift();
+
+        if(current.city === goal)
+            return current.path;
+
+        if(visited.has(current.city))
+            continue;
+
+        visited.add(current.city);
+
+        getNeighbors(current.city).forEach(n => {
+
+            if(!visited.has(n.city)) {
+
+                queue.push({
+                    city:n.city,
+                    distance:current.distance+n.cost,
+                    path:[...current.path,n.city]
+                });
 
             }
 
@@ -518,486 +747,849 @@ function drawGraph(path = [], start = "", end = "") {
 
     }
 
+    return [];
+}
 
-    /* DRAW CITIES */
+function calculatePathDistance(path) {
 
-    for (let city in positions) {
+    let total = 0;
 
-        let pos = positions[city];
+    for(let i=0;i<path.length-1;i++) {
 
-        let circle = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "circle"
+        const edge = edges.find(e =>
+            (e[0]===path[i] && e[1]===path[i+1]) ||
+            (e[1]===path[i] && e[0]===path[i+1])
         );
 
-        circle.setAttribute("cx", pos.x);
-        circle.setAttribute("cy", pos.y);
-        circle.setAttribute("r", "28");
+        if(edge)
+            total += edge[2];
 
-        let color = "#1976d2";
+    }
 
-        if(city === start)
-            color = "#2e7d32";
+    return total;
+}
 
-        if(city === end)
-            color = "#d32f2f";
+/* =====================================================
+   RUN ALGORITHM
+===================================================== */
 
-        if(path.includes(city) &&
-           city !== start &&
-           city !== end)
-            color = "#1565c0";
+function runAlgorithm(algorithm) {
 
-        circle.setAttribute("fill", color);
+    start = startSelect.value;
+    goal = goalSelect.value;
 
-        svg.appendChild(circle);
+    if(!start || !goal) {
 
-
-        let text = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "text"
+        alert(
+            "Please select Start City and Destination City first."
         );
 
-        text.setAttribute("x", pos.x);
-        text.setAttribute("y", pos.y + 5);
+        return;
+    }
 
-        text.setAttribute(
-            "text-anchor",
-            "middle"
-        );
+    if(start === goal) {
 
-        text.setAttribute(
-            "font-size",
-            "11"
-        );
+        alert("Start and destination must be different.");
 
-        text.setAttribute(
-            "fill",
-            "white"
-        );
+        return;
+    }
 
-        text.textContent =
-            city.substring(0,4);
+    currentAlgorithm = algorithm;
 
-        svg.appendChild(text);
+    algorithmSteps = [];
+    stepIndex = 0;
 
+    clearGraph();
 
-        let cityName = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "text"
-        );
+    if(algorithm === "DFS")
+        createDFS();
 
-        cityName.setAttribute("x", pos.x);
+    else if(algorithm === "BFS")
+        createBFS();
 
-        cityName.setAttribute(
-            "y",
-            pos.y + 48
-        );
+    else if(algorithm === "A*")
+        createAStar();
 
-        cityName.setAttribute(
-            "text-anchor",
-            "middle"
-        );
+    else if(algorithm === "HILL")
+        createHillClimbing();
 
-        cityName.setAttribute(
-            "font-size",
-            "14"
-        );
+    else if(algorithm === "AO*")
+        createAOStar();
 
-        cityName.textContent = city;
+    showStep();
 
-        svg.appendChild(cityName);
+}
+
+/* =====================================================
+   DFS
+===================================================== */
+
+function createDFS() {
+
+    document.getElementById("algorithmTitle").innerText =
+        "🔴 Depth First Search (DFS)";
+
+    document.getElementById("algorithmDescription").innerText =
+        "DFS uses a Stack. It explores one branch deeply before backtracking.";
+
+    let stack = [{
+        city:start,
+        path:[start]
+    }];
+
+    let visited = new Set();
+
+    while(stack.length) {
+
+        let current = stack.pop();
+
+        if(visited.has(current.city))
+            continue;
+
+        visited.add(current.city);
+
+        algorithmSteps.push({
+            current:current.city,
+            visited:[...visited],
+            data:
+            "STACK: " +
+            stack.map(x=>x.city).join(" → ")
+        });
+
+        if(current.city === goal) {
+
+            algorithmSteps.push({
+                final:true,
+                path:current.path
+            });
+
+            break;
+        }
+
+        let neighbors =
+            getNeighbors(current.city).reverse();
+
+        neighbors.forEach(n => {
+
+            if(!visited.has(n.city)) {
+
+                stack.push({
+                    city:n.city,
+                    path:[...current.path,n.city]
+                });
+
+            }
+
+        });
 
     }
 
 }
 
+/* =====================================================
+   BFS
+===================================================== */
 
-/* =========================
-   CALCULATE DISTANCE
-========================= */
+function createBFS() {
 
-function calculateDistance(){
+    document.getElementById("algorithmTitle").innerText =
+        "🟢 Breadth First Search (BFS)";
 
-    const start =
-        document.getElementById("startCity").value;
+    document.getElementById("algorithmDescription").innerText =
+        "BFS uses a Queue and explores nodes level by level.";
 
-    const end =
-        document.getElementById("endCity").value;
+    let queue = [{
+        city:start,
+        path:[start]
+    }];
 
-    if(start === "" || end === ""){
+    let visited = new Set();
 
-        document.getElementById("result").innerHTML =
-        "⚠️ Please select both cities.";
+    while(queue.length) {
 
-        return;
+        let current = queue.shift();
+
+        if(visited.has(current.city))
+            continue;
+
+        visited.add(current.city);
+
+        algorithmSteps.push({
+            current:current.city,
+            visited:[...visited],
+            data:
+            "QUEUE: " +
+            queue.map(x=>x.city).join(" → ")
+        });
+
+        if(current.city === goal) {
+
+            algorithmSteps.push({
+                final:true,
+                path:current.path
+            });
+
+            break;
+        }
+
+        getNeighbors(current.city).forEach(n => {
+
+            if(!visited.has(n.city)) {
+
+                queue.push({
+                    city:n.city,
+                    path:[...current.path,n.city]
+                });
+
+            }
+
+        });
+
     }
 
-    if(start === end){
+}
 
-        document.getElementById("result").innerHTML =
-        "⚠️ Start and destination cities must be different.";
+/* =====================================================
+   A*
+===================================================== */
 
-        return;
+function createAStar() {
+
+    document.getElementById("algorithmTitle").innerText =
+        "🟣 A* Search Algorithm";
+
+    document.getElementById("algorithmDescription").innerText =
+        "A* selects the node with the smallest f(n), where f(n) = g(n) + h(n).";
+
+    let open = [{
+        city:start,
+        g:0,
+        path:[start]
+    }];
+
+    let closed = new Set();
+
+    while(open.length) {
+
+        open.sort((a,b) =>
+            (a.g + cities[a.city].h) -
+            (b.g + cities[b.city].h)
+        );
+
+        let current = open.shift();
+
+        if(closed.has(current.city))
+            continue;
+
+        closed.add(current.city);
+
+        let h = cities[current.city].h;
+
+        let f = current.g + h;
+
+        algorithmSteps.push({
+
+            current:current.city,
+
+            visited:[...closed],
+
+            data:
+            `g(n) = ${current.g}
+h(n) = ${h}
+f(n) = g(n) + h(n) = ${f}
+
+OPEN LIST:
+${open.map(x =>
+x.city +
+" [f=" +
+(x.g+cities[x.city].h) +
+"]"
+).join(", ")}`
+
+        });
+
+        if(current.city === goal) {
+
+            algorithmSteps.push({
+                final:true,
+                path:current.path,
+                cost:current.g
+            });
+
+            break;
+        }
+
+        getNeighbors(current.city).forEach(n => {
+
+            if(!closed.has(n.city)) {
+
+                open.push({
+
+                    city:n.city,
+
+                    g:current.g+n.cost,
+
+                    path:[
+                        ...current.path,
+                        n.city
+                    ]
+
+                });
+
+            }
+
+        });
+
     }
 
-    let distance = null;
+}
 
-    graph[start].forEach(item => {
+/* =====================================================
+   HILL CLIMBING
+===================================================== */
 
-        if(item.city === end)
-            distance = item.distance;
+function createHillClimbing() {
+
+    document.getElementById("algorithmTitle").innerText =
+        "🟡 Hill Climbing";
+
+    document.getElementById("algorithmDescription").innerText =
+        "Hill Climbing chooses the neighboring city with the lowest heuristic value.";
+
+    let current = start;
+
+    let path = [current];
+
+    let visited = new Set();
+
+    while(true) {
+
+        visited.add(current);
+
+        const neighbors =
+            getNeighbors(current)
+            .filter(n => !visited.has(n.city));
+
+        if(current === goal) {
+
+            algorithmSteps.push({
+                final:true,
+                path:path
+            });
+
+            break;
+        }
+
+        if(neighbors.length === 0) {
+
+            algorithmSteps.push({
+
+                current:current,
+
+                visited:[...visited],
+
+                data:
+                "No better neighbor available.\n" +
+                "Hill Climbing reached a local optimum."
+
+            });
+
+            break;
+        }
+
+        let best =
+            neighbors.sort(
+                (a,b) =>
+                cities[a.city].h -
+                cities[b.city].h
+            )[0];
+
+        algorithmSteps.push({
+
+            current:current,
+
+            visited:[...visited],
+
+            data:
+            "Neighbors:\n" +
+            neighbors.map(n =>
+                n.city +
+                "  h=" +
+                cities[n.city].h
+            ).join("\n") +
+
+            "\n\nBest Neighbor: " +
+            best.city +
+
+            "\nHeuristic = " +
+            cities[best.city].h
+
+        });
+
+        if(
+            cities[best.city].h >=
+            cities[current].h
+        ) {
+
+            algorithmSteps.push({
+
+                current:current,
+
+                visited:[...visited],
+
+                data:
+                "No improvement found.\n" +
+                "Algorithm stops at local optimum."
+
+            });
+
+            break;
+        }
+
+        current = best.city;
+
+        path.push(current);
+
+    }
+
+}
+
+/* =====================================================
+   AO*
+===================================================== */
+
+function createAOStar() {
+
+    document.getElementById("algorithmTitle").innerText =
+        "🩷 AO* Algorithm";
+
+    document.getElementById("algorithmDescription").innerText =
+        "AO* works on AND-OR graphs. OR chooses one alternative, while AND requires all connected sub-problems.";
+
+    /*
+       Demonstration AND-OR graph.
+
+       OR:
+       Start
+        |
+       ----------------
+       |              |
+       A              B
+
+       AND:
+       A -> C AND D
+
+       B -> E
+    */
+
+    const aoGraph = {
+
+        Start: {
+            type:"OR",
+            choices:[
+                {nodes:["A"],cost:4},
+                {nodes:["B"],cost:8}
+            ]
+        },
+
+        A: {
+            type:"AND",
+            choices:[
+                {nodes:["C","D"],cost:6}
+            ]
+        },
+
+        B: {
+            type:"OR",
+            choices:[
+                {nodes:["E"],cost:5}
+            ]
+        }
+
+    };
+
+    algorithmSteps.push({
+
+        current:"Start",
+
+        visited:["Start"],
+
+        data:
+        "AO* begins at the root node.\n\n" +
+        "Start is an OR node.\n" +
+        "OR node chooses the minimum-cost alternative."
 
     });
 
-    if(distance !== null){
+    algorithmSteps.push({
 
-        document.getElementById("result").innerHTML =
-        `<h3>📏 Distance Result</h3>
-         <b>${start}</b> → <b>${end}</b><br>
-         Direct Distance: <b>${distance} km</b>`;
+        current:"A",
 
-    } else {
+        visited:["Start","A"],
 
-        document.getElementById("result").innerHTML =
-        `<h3>📏 Distance Result</h3>
-         There is no direct road between
-         <b>${start}</b> and <b>${end}</b>.<br><br>
-         Choose an algorithm to find the path.`;
+        data:
+        "Selected A because its estimated cost is lower.\n\n" +
+        "A is an AND node.\n" +
+        "Therefore BOTH C and D must be solved."
 
-    }
+    });
 
-    drawGraph([], start, end);
+    algorithmSteps.push({
 
-}
+        current:"C + D",
 
+        visited:["Start","A","C","D"],
 
-/* =========================
-   DFS ALGORITHM
-========================= */
+        data:
+        "AND condition:\n\n" +
+        "C cost = 3\n" +
+        "D cost = 3\n\n" +
+        "Total = 3 + 3 = 6"
 
-function DFS(start, goal){
+    });
 
-    let visited = [];
-    let path = [];
+    algorithmSteps.push({
 
-    function search(city){
+        current:"Solution",
 
-        visited.push(city);
+        visited:["Start","A","C","D"],
 
-        if(city === goal){
+        data:
+        "AO* updates the cost of A.\n\n" +
+        "A = C AND D\n" +
+        "Cost(A) = 6\n\n" +
+        "Final solution:\n" +
+        "Start → A → (C AND D)"
 
-            path.push(city);
+    });
 
-            return true;
-        }
+    algorithmSteps.push({
 
-        for(let neighbor of graph[city]){
+        final:true,
 
-            if(!visited.includes(neighbor.city)){
+        path:["Start","A","C","D"],
 
-                if(search(neighbor.city)){
+        cost:6
 
-                    path.push(city);
-
-                    return true;
-
-                }
-
-            }
-
-        }
-
-        return false;
-    }
-
-    search(start);
-
-    return {
-        path: path.reverse(),
-        visited: visited
-    };
+    });
 
 }
 
+/* =====================================================
+   SHOW STEP
+===================================================== */
 
-/* =========================
-   BFS ALGORITHM
-========================= */
+function showStep() {
 
-function BFS(start, goal){
+    if(stepIndex >= algorithmSteps.length) {
 
-    let queue = [[start]];
-
-    let visited = [start];
-
-    while(queue.length > 0){
-
-        let path = queue.shift();
-
-        let city =
-            path[path.length - 1];
-
-        if(city === goal){
-
-            return {
-                path: path,
-                visited: visited
-            };
-
-        }
-
-        for(let neighbor of graph[city]){
-
-            if(!visited.includes(neighbor.city)){
-
-                visited.push(neighbor.city);
-
-                let newPath =
-                    [...path, neighbor.city];
-
-                queue.push(newPath);
-
-            }
-
-        }
-
-    }
-
-}
-
-
-/* =========================
-   DIJKSTRA / A*
-   SIMPLIFIED DEMONSTRATION
-========================= */
-
-function shortestPath(start, goal){
-
-    let distances = {};
-
-    let previous = {};
-
-    let unvisited = Object.keys(graph);
-
-    for(let city in graph){
-
-        distances[city] = Infinity;
-
-        previous[city] = null;
-
-    }
-
-    distances[start] = 0;
-
-    while(unvisited.length){
-
-        unvisited.sort(
-            (a,b) =>
-            distances[a] - distances[b]
-        );
-
-        let current = unvisited.shift();
-
-        if(current === goal)
-            break;
-
-        for(let neighbor of graph[current]){
-
-            let newDistance =
-                distances[current]
-                + neighbor.distance;
-
-            if(
-                newDistance <
-                distances[neighbor.city]
-            ){
-
-                distances[neighbor.city] =
-                    newDistance;
-
-                previous[neighbor.city] =
-                    current;
-
-            }
-
-        }
-
-    }
-
-    let path = [];
-
-    let current = goal;
-
-    while(current){
-
-        path.unshift(current);
-
-        current =
-            previous[current];
-
-    }
-
-    return {
-        path: path,
-        distance: distances[goal]
-    };
-
-}
-
-
-/* =========================
-   RUN ALGORITHM
-========================= */
-
-function runAlgorithm(algorithm){
-
-    const start =
-        document.getElementById("startCity").value;
-
-    const end =
-        document.getElementById("endCity").value;
-
-    if(start === "" || end === ""){
-
-        document.getElementById("result").innerHTML =
-        "⚠️ Please select Start City and Destination City first.";
+        finishAlgorithm();
 
         return;
-
     }
 
-    let result;
+    const step =
+        algorithmSteps[stepIndex];
 
-    if(algorithm === "DFS"){
+    const stepsBox =
+        document.getElementById("steps");
 
-        result = DFS(start, end);
+    if(step.final) {
 
+        finishAlgorithm();
+
+        return;
     }
 
-    else if(algorithm === "BFS"){
+    stepsBox.innerHTML +=
 
-        result = BFS(start, end);
+        `<div class="step">
 
-    }
+        <b>Step ${stepIndex+1}</b><br><br>
 
-    else{
+        Current Node:
+        <b>${step.current}</b>
 
-        result = shortestPath(start, end);
+        <br><br>
 
-    }
+        Visited:
+        ${step.visited.join(" → ")}
 
-    let path = result.path;
+        <br><br>
 
-    let visitedText =
-        result.visited
-        ? result.visited.join(" → ")
-        : path.join(" → ");
+        ${step.data.replace(/\n/g,"<br>")}
 
-    drawGraph(path, start, end);
+        </div>`;
 
-    let algorithmExplanation = "";
+    stepsBox.scrollTop =
+        stepsBox.scrollHeight;
 
-    if(algorithm === "DFS"){
+    updateGraph(step);
 
-        algorithmExplanation =
-        "DFS explores one branch deeply before backtracking.";
+    document.getElementById("progressBar").style.width =
+        ((stepIndex+1) /
+        algorithmSteps.length * 100) + "%";
 
-    }
-
-    else if(algorithm === "BFS"){
-
-        algorithmExplanation =
-        "BFS explores cities level by level using a queue.";
-
-    }
-
-    else if(algorithm === "A*"){
-
-        algorithmExplanation =
-        "A* selects a path based on path cost and estimated distance to the goal.";
-
-    }
-
-    else if(algorithm === "Hill Climbing"){
-
-        algorithmExplanation =
-        "Hill Climbing chooses the next city that appears closer to the destination.";
-
-    }
-
-    else if(algorithm === "AO*"){
-
-        algorithmExplanation =
-        "AO* explores alternative solution paths and selects a suitable solution graph.";
-
-    }
-
-
-    let distanceText = "";
-
-    if(result.distance !== undefined){
-
-        distanceText =
-        `<br><br><b>Total Distance:</b>
-         ${result.distance} km`;
-
-    }
-
-
-    document.getElementById("result").innerHTML =
-
-    `<h3>🤖 ${algorithm} Algorithm</h3>
-
-    <p><b>Start:</b> ${start}</p>
-
-    <p><b>Goal:</b> ${end}</p>
-
-    <br>
-
-    <p><b>Algorithm Working:</b></p>
-
-    <p>${algorithmExplanation}</p>
-
-    <br>
-
-    <p><b>Visited Cities:</b></p>
-
-    <p>${visitedText}</p>
-
-    <br>
-
-    <p><b>Final Path:</b></p>
-
-    <p style="color:#1565c0;font-size:18px;font-weight:bold">
-    ${path.join(" → ")}
-    </p>
-
-    ${distanceText}`;
+    stepIndex++;
 
 }
 
+/* =====================================================
+   NEXT STEP
+===================================================== */
 
-/* =========================
-   RESET
-========================= */
+function nextStep() {
 
-function resetGraph(){
+    if(!currentAlgorithm) {
 
-    document.getElementById("startCity").value = "";
+        alert("Please select an algorithm first.");
 
-    document.getElementById("endCity").value = "";
+        return;
+    }
+
+    showStep();
+
+}
+
+/* =====================================================
+   AUTOMATIC EXECUTION
+===================================================== */
+
+function runAutomatically() {
+
+    if(!currentAlgorithm) {
+
+        alert("Please select an algorithm first.");
+
+        return;
+    }
+
+    let timer =
+        setInterval(() => {
+
+            if(stepIndex >= algorithmSteps.length) {
+
+                clearInterval(timer);
+
+                finishAlgorithm();
+
+                return;
+            }
+
+            showStep();
+
+        },1200);
+
+}
+
+/* =====================================================
+   GRAPH UPDATE
+===================================================== */
+
+function updateGraph(step) {
+
+    document
+        .querySelectorAll(".city")
+        .forEach(c =>
+            c.classList.remove(
+                "visited",
+                "current"
+            )
+        );
+
+    step.visited.forEach(city => {
+
+        const el =
+            document.getElementById(
+                "city-" + city
+            );
+
+        if(el)
+            el.classList.add("visited");
+
+    });
+
+    const current =
+        document.getElementById(
+            "city-" + step.current
+        );
+
+    if(current)
+        current.classList.add("current");
+
+    markStartGoal();
+
+}
+
+/* =====================================================
+   FINISH
+===================================================== */
+
+function finishAlgorithm() {
+
+    const finalStep =
+        algorithmSteps.find(s => s.final);
+
+    if(!finalStep)
+        return;
+
+    document
+        .querySelectorAll(".city")
+        .forEach(c =>
+            c.classList.remove(
+                "visited",
+                "current",
+                "path"
+            )
+        );
+
+    if(currentAlgorithm !== "AO*") {
+
+        finalStep.path.forEach(city => {
+
+            const el =
+                document.getElementById(
+                    "city-" + city
+                );
+
+            if(el)
+                el.classList.add("path");
+
+        });
+
+    }
+
+    markStartGoal();
+
+    let cost =
+        finalStep.cost !== undefined
+        ? finalStep.cost
+        : calculatePathDistance(finalStep.path);
 
     document.getElementById("result").innerHTML =
-    "Select two cities and choose an algorithm.";
+
+        `<div class="result">
+
+        <h3>✅ Algorithm Completed</h3>
+
+        <p>
+        <b>Algorithm:</b>
+        ${currentAlgorithm}
+        </p>
+
+        <p>
+        <b>Path:</b>
+        ${finalStep.path.join(" → ")}
+        </p>
+
+        <p>
+        <b>Total Cost / Distance:</b>
+        ${cost} ${currentAlgorithm === "AO*" ? "" : "km"}
+        </p>
+
+        <p>
+        <b>Nodes Explored:</b>
+        ${algorithmSteps.length}
+        </p>
+
+        </div>`;
+
+}
+
+/* =====================================================
+   MARK START / GOAL
+===================================================== */
+
+function markStartGoal() {
+
+    document
+        .querySelectorAll(".city")
+        .forEach(c =>
+            c.classList.remove(
+                "start",
+                "goal"
+            )
+        );
+
+    if(start) {
+
+        const s =
+            document.getElementById(
+                "city-" + start
+            );
+
+        if(s)
+            s.classList.add("start");
+
+    }
+
+    if(goal) {
+
+        const g =
+            document.getElementById(
+                "city-" + goal
+            );
+
+        if(g)
+            g.classList.add("goal");
+
+    }
+
+}
+
+/* =====================================================
+   CLEAR
+===================================================== */
+
+function clearGraph() {
+
+    document
+        .querySelectorAll(".city")
+        .forEach(c =>
+            c.classList.remove(
+                "visited",
+                "current",
+                "path",
+                "start",
+                "goal"
+            )
+        );
+
+    document.getElementById("steps").innerHTML = "";
+
+    document.getElementById("result").innerHTML = "";
+
+    document.getElementById("progressBar").style.width = "0%";
+
+}
+
+/* =====================================================
+   RESET
+===================================================== */
+
+function resetPage() {
+
+    startSelect.value = "";
+    goalSelect.value = "";
+
+    currentAlgorithm = "";
+    algorithmSteps = [];
+    stepIndex = 0;
+
+    clearGraph();
+
+    document.getElementById("algorithmTitle").innerText =
+        "Select an algorithm";
+
+    document.getElementById("algorithmDescription").innerText =
+        "Click DFS, BFS, A*, Hill Climbing or AO* to see how the algorithm works step-by-step.";
+
+    document.getElementById("steps").innerHTML =
+        "Waiting for algorithm...";
 
     drawGraph();
 
 }
-
-
-/* INITIAL GRAPH */
-
-drawGraph();
 
 </script>
 
