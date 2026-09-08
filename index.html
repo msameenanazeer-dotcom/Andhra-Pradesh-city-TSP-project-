@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Andhra Pradesh TSP</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #eef4ff;
+            margin: 0;
+            text-align: center;
+        }
+
+        header {
+            background: #123c69;
+            color: white;
+            padding: 30px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        select {
+            width: 300px;
+            padding: 12px;
+            margin: 10px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 12px 25px;
+            margin: 10px;
+            border: none;
+            border-radius: 8px;
+            background: #1976d2;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0d47a1;
+        }
+
+        #result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f1f8ff;
+            border-radius: 10px;
+            font-size: 18px;
+        }
+
+        .algorithm-buttons button {
+            background: #388e3c;
+        }
+
+        .algorithm-buttons button:hover {
+            background: #1b5e20;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<header>
+
+    <h1>Andhra Pradesh City TSP</h1>
+
+    <p>
+        Travelling Salesman Problem using AI Search Algorithms
+    </p>
+
+</header>
+
+
+<div class="container">
+
+    <h2>Select Andhra Pradesh Cities</h2>
+
+    <p>Select the cities you want to visit:</p>
+
+
+    <select id="city1">
+
+        <option value="Visakhapatnam">
+            Visakhapatnam
+        </option>
+
+        <option value="Vijayawada">
+            Vijayawada
+        </option>
+
+        <option value="Guntur">
+            Guntur
+        </option>
+
+        <option value="Tirupati">
+            Tirupati
+        </option>
+
+        <option value="Nellore">
+            Nellore
+        </option>
+
+        <option value="Kurnool">
+            Kurnool
+        </option>
+
+        <option value="Kadapa">
+            Kadapa
+        </option>
+
+        <option value="Rajahmundry">
+            Rajahmundry
+        </option>
+
+    </select>
+
+
+    <select id="city2">
+
+        <option value="Vijayawada">
+            Vijayawada
+        </option>
+
+        <option value="Visakhapatnam">
+            Visakhapatnam
+        </option>
+
+        <option value="Guntur">
+            Guntur
+        </option>
+
+        <option value="Tirupati">
+            Tirupati
+        </option>
+
+        <option value="Nellore">
+            Nellore
+        </option>
+
+        <option value="Kurnool">
+            Kurnool
+        </option>
+
+        <option value="Kadapa">
+            Kadapa
+        </option>
+
+        <option value="Rajahmundry">
+            Rajahmundry
+        </option>
+
+    </select>
+
+
+    <br>
+
+
+    <button onclick="calculateDistance()">
+        Calculate Distance
+    </button>
+
+
+    <h2>Choose Algorithm</h2>
+
+    <div class="algorithm-buttons">
+
+        <button onclick="runAlgorithm('A*')">
+            A*
+        </button>
+
+        <button onclick="runAlgorithm('BFS')">
+            BFS
+        </button>
+
+        <button onclick="runAlgorithm('DFS')">
+            DFS
+        </button>
+
+        <button onclick="runAlgorithm('Hill Climbing')">
+            Hill Climbing
+        </button>
+
+        <button onclick="runAlgorithm('AO*')">
+            AO*
+        </button>
+
+    </div>
+
+
+    <div id="result">
+
+        Select two cities to calculate distance.
+
+    </div>
+
+</div>
+
+
+<script>
+
+const distances = {
+
+    "Visakhapatnam-Vijayawada": 350,
+    "Visakhapatnam-Guntur": 400,
+    "Visakhapatnam-Tirupati": 760,
+    "Visakhapatnam-Nellore": 670,
+    "Visakhapatnam-Kurnool": 650,
+    "Visakhapatnam-Kadapa": 650,
+    "Visakhapatnam-Rajahmundry": 190,
+
+    "Vijayawada-Guntur": 35,
+    "Vijayawada-Tirupati": 410,
+    "Vijayawada-Nellore": 280,
+    "Vijayawada-Kurnool": 350,
+    "Vijayawada-Kadapa": 430,
+    "Vijayawada-Rajahmundry": 160,
+
+    "Guntur-Tirupati": 390,
+    "Guntur-Nellore": 260,
+    "Guntur-Kurnool": 330,
+    "Guntur-Kadapa": 410,
+    "Guntur-Rajahmundry": 190,
+
+    "Tirupati-Nellore": 130,
+    "Tirupati-Kurnool": 360,
+    "Tirupati-Kadapa": 220,
+    "Tirupati-Rajahmundry": 500,
+
+    "Nellore-Kurnool": 390,
+    "Nellore-Kadapa": 290,
+    "Nellore-Rajahmundry": 410,
+
+    "Kurnool-Kadapa": 210,
+    "Kurnool-Rajahmundry": 500,
+
+    "Kadapa-Rajahmundry": 430
+};
+
+
+function getDistance(city1, city2) {
+
+    if (city1 === city2) {
+        return 0;
+    }
+
+    let key1 = city1 + "-" + city2;
+
+    let key2 = city2 + "-" + city1;
+
+    if (distances[key1]) {
+        return distances[key1];
+    }
+
+    if (distances[key2]) {
+        return distances[key2];
+    }
+
+    return "Distance not available";
+}
+
+
+function calculateDistance() {
+
+    let city1 =
+        document.getElementById("city1").value;
+
+    let city2 =
+        document.getElementById("city2").value;
+
+    let distance =
+        getDistance(city1, city2);
+
+    document.getElementById("result").innerHTML =
+
+        "<h3>Distance Result</h3>" +
+
+        "<p><b>From:</b> " +
+        city1 +
+        "</p>" +
+
+        "<p><b>To:</b> " +
+        city2 +
+        "</p>" +
+
+        "<p><b>Distance:</b> " +
+        distance +
+        " km</p>";
+}
+
+
+function runAlgorithm(algorithm) {
+
+    let city1 =
+        document.getElementById("city1").value;
+
+    let city2 =
+        document.getElementById("city2").value;
+
+    let distance =
+        getDistance(city1, city2);
+
+    document.getElementById("result").innerHTML =
+
+        "<h3>" +
+        algorithm +
+        " Algorithm Selected" +
+        "</h3>" +
+
+        "<p><b>Start City:</b> " +
+        city1 +
+        "</p>" +
+
+        "<p><b>Destination:</b> " +
+        city2 +
+        "</p>" +
+
+        "<p><b>Distance:</b> " +
+        distance +
+        " km</p>" +
+
+        "<p>Algorithm ready for route optimization.</p>";
+}
+
+</script>
+
+</body>
+
+</html>
